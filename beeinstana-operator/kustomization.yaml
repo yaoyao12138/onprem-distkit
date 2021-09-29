@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: beeinstana-operator-system
+resources:
+  - base/beeinstana.crd.yaml
+  - base/operator.yaml
+  - storageclass.yaml
+  - serviceaccounts.yaml
+  - roles.yaml
+  - rolebindings.yaml
+  - beeinstana.cr.yaml

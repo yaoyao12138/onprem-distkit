@@ -1,0 +1,47 @@
+apiVersion: beeinstana.instana.com/v1beta1
+kind: BeeInstana
+metadata:
+  name: instana-beeinstana
+spec:
+  privilegedContainers: false
+  hostPID: false
+  aggregator:
+    shards: 2
+    mirrors: 2
+    image:
+      name: containers.instana.io/fleet/beeinstana/aggregator
+      tag: "1.1.79-release.1"
+    httpPort: 9998
+    tcpPort: 9191
+    memory: "2000Mi"
+    cpu: "4"
+    username: ""
+    password: ""
+    volumes:
+      live:
+        storageClass: pd-ssd
+        size: "50Gi"
+  ingestor:
+    replicas: 1
+    image:
+      name: containers.instana.io/fleet/beeinstana/ingestor
+      tag: "1.1.79-release.1"
+    webSocketPort: 9090
+    adminPort: 8080
+    memory: "4000Mi"
+    cpu: "4"
+    username: ""
+    password: ""
+    metricsTopic: raw_metrics
+    brokerList: 10.164.0.2:9092
+    env: onprem
+    workerPoolSize: 20
+    maxQueueSize: 5000
+    flushInterval: 10000
+  config:
+    replicas: 2
+    image:
+      name: containers.instana.io/fleet/beeinstana/monconfig
+      tag: master
+    port: 8000
+    memory: "1000Mi"

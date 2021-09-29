@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: beeinstana-operator
+subjects:
+- kind: ServiceAccount
+  name: beeinstana-operator
+roleRef:
+  kind: ClusterRole
+  name: beeinstana-operator
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: get-configmaps
+subjects:
+- kind: ServiceAccount
+  name: beeinstana-config
+roleRef:
+  kind: Role
+  name: get-configmaps
+  apiGroup: ""

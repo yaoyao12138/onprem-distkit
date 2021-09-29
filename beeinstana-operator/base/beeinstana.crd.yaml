@@ -1,0 +1,538 @@
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.5
+  creationTimestamp: null
+  name: beeinstanas.beeinstana.instana.com
+spec:
+  group: beeinstana.instana.com
+  names:
+    kind: BeeInstana
+    listKind: BeeInstanaList
+    plural: beeinstanas
+    singular: beeinstana
+  scope: Namespaced
+  validation:
+    openAPIV3Schema:
+      description: BeeInstana is the Schema for the beeinstanas API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: BeeInstanaSpec defines the desired state of BeeInstana
+          properties:
+            aggregator:
+              description: Aggregator spec
+              properties:
+                cpu:
+                  anyOf:
+                  - type: integer
+                  - type: string
+                  description: CPU to allocate
+                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                  x-kubernetes-int-or-string: true
+                httpPort:
+                  description: HTTP port, will default to 9998
+                  format: int32
+                  type: integer
+                image:
+                  description: Docker image to use
+                  properties:
+                    name:
+                      description: Docker image name to use
+                      type: string
+                    tag:
+                      description: Docker image tag to use
+                      type: string
+                  required:
+                  - name
+                  - tag
+                  type: object
+                memory:
+                  anyOf:
+                  - type: integer
+                  - type: string
+                  description: Memory to allocate
+                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                  x-kubernetes-int-or-string: true
+                username:
+                  description: BeeInstana's username for authentication
+                  type: string
+                password:
+                  description: BeeInstana's password for authentication
+                  type: string
+                mirrors:
+                  description: Number of mirrors per shard, will default to 1
+                  format: int32
+                  type: integer
+                nodeAffinityLabel:
+                  description: Node group to have affinity toward
+                  type: string
+                shards:
+                  description: Number of shards, will default to 1. For each shard,
+                    a StatefulSet with the spec will be created, with them enumerated
+                    0..<shards - 1>. Each StatefulSet then will run up to <mirrors>
+                    of mirrors
+                  format: int32
+                  type: integer
+                tcpPort:
+                  description: TCP port, will default to 9191
+                  format: int32
+                  type: integer
+                volumes:
+                  description: Volumes for data
+                  properties:
+                    live:
+                      description: Live data volume
+                      properties:
+                        size:
+                          anyOf:
+                          - type: integer
+                          - type: string
+                          description: Size of the volume
+                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                          x-kubernetes-int-or-string: true
+                        storageClass:
+                          description: StorageClass to use
+                          type: string
+                      required:
+                      - size
+                      - storageClass
+                      type: object
+                    longTerm:
+                      description: Long-term data volume
+                      properties:
+                        size:
+                          anyOf:
+                          - type: integer
+                          - type: string
+                          description: Size of the volume
+                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                          x-kubernetes-int-or-string: true
+                        storageClass:
+                          description: StorageClass to use
+                          type: string
+                      required:
+                      - size
+                      - storageClass
+                      type: object
+                  required:
+                  - live
+                  type: object
+              required:
+              - cpu
+              - image
+              - memory
+              - volumes
+              type: object
+            config:
+              description: Config spec
+              properties:
+                image:
+                  description: Docker image to use
+                  properties:
+                    name:
+                      description: Docker image name to use
+                      type: string
+                    tag:
+                      description: Docker image tag to use
+                      type: string
+                  required:
+                  - name
+                  - tag
+                  type: object
+                memory:
+                  anyOf:
+                  - type: integer
+                  - type: string
+                  description: Memory to allocate
+                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                  x-kubernetes-int-or-string: true
+                nodeAffinityLabel:
+                  description: Node group to have affinity toward
+                  type: string
+                port:
+                  description: Port, will default to 8000
+                  format: int32
+                  type: integer
+                replicas:
+                  description: Number of replicas, will default to 1
+                  format: int32
+                  type: integer
+              required:
+              - image
+              - memory
+              type: object
+            hostPID:
+              description: HostPID decides if containers should be using host's pid
+                space. This is temporary for our self-monitoring to avoid pid-handshake
+              type: boolean
+            ingestor:
+              description: Ingestor spec
+              properties:
+                adminPort:
+                  description: Admin port, will default to 8080
+                  format: int32
+                  type: integer
+                brokerList:
+                  description: Kafka broker list to boostrap client with
+                  type: string
+                cpu:
+                  anyOf:
+                  - type: integer
+                  - type: string
+                  description: CPU to allocate
+                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                  x-kubernetes-int-or-string: true
+                env:
+                  description: Instana environment in which to report internal metrics
+                  type: string
+                username:
+                  description: BeeInstana's username for authentication
+                  type: string
+                password:
+                  description: BeeInstana's password for authentication
+                  type: string
+                flushInterval:
+                  description: FlushInterval is the size of amount of time between
+                    sweeps
+                  format: int32
+                  type: integer
+                image:
+                  description: Docker image to use
+                  properties:
+                    name:
+                      description: Docker image name to use
+                      type: string
+                    tag:
+                      description: Docker image tag to use
+                      type: string
+                  required:
+                  - name
+                  - tag
+                  type: object
+                maxQueueSize:
+                  description: MaxQueueSize is the size of the internal queue
+                  format: int32
+                  type: integer
+                memory:
+                  anyOf:
+                  - type: integer
+                  - type: string
+                  description: Memory to allocate
+                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                  x-kubernetes-int-or-string: true
+                metricsTopic:
+                  description: Kafka topic to get metrics from
+                  type: string
+                nodeAffinityLabel:
+                  description: Node group to have affinity toward
+                  type: string
+                replicas:
+                  description: Number of replicas, will default to 1
+                  format: int32
+                  type: integer
+                webSocketPort:
+                  description: WebSocket port, will default to 9090
+                  format: int32
+                  type: integer
+                workerPoolSize:
+                  description: WorkerPoolSize determines the size of the internal
+                    worker pool
+                  format: int32
+                  type: integer
+              required:
+              - brokerList
+              - cpu
+              - env
+              - image
+              - memory
+              - metricsTopic
+              type: object
+            privilegedContainers:
+              description: PrivilegedContainers decides if containers should be spon
+                up privileged, for example for chaos tools (tc etc.)
+              type: boolean
+          required:
+          - aggregator
+          - config
+          - ingestor
+          type: object
+        status:
+          description: BeeInstanaStatus defines the observed state of BeeInstana
+          properties:
+            aggregatorStatusses:
+              description: Status of each aggregator
+              items:
+                description: StatefulSetStatus represents the current state of a StatefulSet.
+                properties:
+                  collisionCount:
+                    description: collisionCount is the count of hash collisions for
+                      the StatefulSet. The StatefulSet controller uses this field
+                      as a collision avoidance mechanism when it needs to create the
+                      name for the newest ControllerRevision.
+                    format: int32
+                    type: integer
+                  conditions:
+                    description: Represents the latest available observations of a
+                      statefulset's current state.
+                    items:
+                      description: StatefulSetCondition describes the state of a statefulset
+                        at a certain point.
+                      properties:
+                        lastTransitionTime:
+                          description: Last time the condition transitioned from one
+                            status to another.
+                          format: date-time
+                          type: string
+                        message:
+                          description: A human readable message indicating details
+                            about the transition.
+                          type: string
+                        reason:
+                          description: The reason for the condition's last transition.
+                          type: string
+                        status:
+                          description: Status of the condition, one of True, False,
+                            Unknown.
+                          type: string
+                        type:
+                          description: Type of statefulset condition.
+                          type: string
+                      required:
+                      - status
+                      - type
+                      type: object
+                    type: array
+                  currentReplicas:
+                    description: currentReplicas is the number of Pods created by
+                      the StatefulSet controller from the StatefulSet version indicated
+                      by currentRevision.
+                    format: int32
+                    type: integer
+                  currentRevision:
+                    description: currentRevision, if not empty, indicates the version
+                      of the StatefulSet used to generate Pods in the sequence [0,currentReplicas).
+                    type: string
+                  observedGeneration:
+                    description: observedGeneration is the most recent generation
+                      observed for this StatefulSet. It corresponds to the StatefulSet's
+                      generation, which is updated on mutation by the API Server.
+                    format: int64
+                    type: integer
+                  readyReplicas:
+                    description: readyReplicas is the number of Pods created by the
+                      StatefulSet controller that have a Ready Condition.
+                    format: int32
+                    type: integer
+                  replicas:
+                    description: replicas is the number of Pods created by the StatefulSet
+                      controller.
+                    format: int32
+                    type: integer
+                  updateRevision:
+                    description: updateRevision, if not empty, indicates the version
+                      of the StatefulSet used to generate Pods in the sequence [replicas-updatedReplicas,replicas)
+                    type: string
+                  updatedReplicas:
+                    description: updatedReplicas is the number of Pods created by
+                      the StatefulSet controller from the StatefulSet version indicated
+                      by updateRevision.
+                    format: int32
+                    type: integer
+                required:
+                - replicas
+                type: object
+              type: array
+            badShards:
+              description: Number of shards in a 'bad' state, whatever the reason.
+                Details can be obtained from the statusses of the StatefulSets that
+                represent the shards
+              format: int32
+              type: integer
+            configStatusses:
+              description: Status of each config
+              items:
+                description: DeploymentStatus is the most recently observed status
+                  of the Deployment.
+                properties:
+                  availableReplicas:
+                    description: Total number of available pods (ready for at least
+                      minReadySeconds) targeted by this deployment.
+                    format: int32
+                    type: integer
+                  collisionCount:
+                    description: Count of hash collisions for the Deployment. The
+                      Deployment controller uses this field as a collision avoidance
+                      mechanism when it needs to create the name for the newest ReplicaSet.
+                    format: int32
+                    type: integer
+                  conditions:
+                    description: Represents the latest available observations of a
+                      deployment's current state.
+                    items:
+                      description: DeploymentCondition describes the state of a deployment
+                        at a certain point.
+                      properties:
+                        lastTransitionTime:
+                          description: Last time the condition transitioned from one
+                            status to another.
+                          format: date-time
+                          type: string
+                        lastUpdateTime:
+                          description: The last time this condition was updated.
+                          format: date-time
+                          type: string
+                        message:
+                          description: A human readable message indicating details
+                            about the transition.
+                          type: string
+                        reason:
+                          description: The reason for the condition's last transition.
+                          type: string
+                        status:
+                          description: Status of the condition, one of True, False,
+                            Unknown.
+                          type: string
+                        type:
+                          description: Type of deployment condition.
+                          type: string
+                      required:
+                      - status
+                      - type
+                      type: object
+                    type: array
+                  observedGeneration:
+                    description: The generation observed by the deployment controller.
+                    format: int64
+                    type: integer
+                  readyReplicas:
+                    description: Total number of ready pods targeted by this deployment.
+                    format: int32
+                    type: integer
+                  replicas:
+                    description: Total number of non-terminated pods targeted by this
+                      deployment (their labels match the selector).
+                    format: int32
+                    type: integer
+                  unavailableReplicas:
+                    description: Total number of unavailable pods targeted by this
+                      deployment. This is the total number of pods that are still
+                      required for the deployment to have 100% available capacity.
+                      They may either be pods that are running but not yet available
+                      or pods that still have not been created.
+                    format: int32
+                    type: integer
+                  updatedReplicas:
+                    description: Total number of non-terminated pods targeted by this
+                      deployment that have the desired template spec.
+                    format: int32
+                    type: integer
+                type: object
+              type: array
+            ingestorStatusses:
+              description: Status of each ingestor
+              items:
+                description: DeploymentStatus is the most recently observed status
+                  of the Deployment.
+                properties:
+                  availableReplicas:
+                    description: Total number of available pods (ready for at least
+                      minReadySeconds) targeted by this deployment.
+                    format: int32
+                    type: integer
+                  collisionCount:
+                    description: Count of hash collisions for the Deployment. The
+                      Deployment controller uses this field as a collision avoidance
+                      mechanism when it needs to create the name for the newest ReplicaSet.
+                    format: int32
+                    type: integer
+                  conditions:
+                    description: Represents the latest available observations of a
+                      deployment's current state.
+                    items:
+                      description: DeploymentCondition describes the state of a deployment
+                        at a certain point.
+                      properties:
+                        lastTransitionTime:
+                          description: Last time the condition transitioned from one
+                            status to another.
+                          format: date-time
+                          type: string
+                        lastUpdateTime:
+                          description: The last time this condition was updated.
+                          format: date-time
+                          type: string
+                        message:
+                          description: A human readable message indicating details
+                            about the transition.
+                          type: string
+                        reason:
+                          description: The reason for the condition's last transition.
+                          type: string
+                        status:
+                          description: Status of the condition, one of True, False,
+                            Unknown.
+                          type: string
+                        type:
+                          description: Type of deployment condition.
+                          type: string
+                      required:
+                      - status
+                      - type
+                      type: object
+                    type: array
+                  observedGeneration:
+                    description: The generation observed by the deployment controller.
+                    format: int64
+                    type: integer
+                  readyReplicas:
+                    description: Total number of ready pods targeted by this deployment.
+                    format: int32
+                    type: integer
+                  replicas:
+                    description: Total number of non-terminated pods targeted by this
+                      deployment (their labels match the selector).
+                    format: int32
+                    type: integer
+                  unavailableReplicas:
+                    description: Total number of unavailable pods targeted by this
+                      deployment. This is the total number of pods that are still
+                      required for the deployment to have 100% available capacity.
+                      They may either be pods that are running but not yet available
+                      or pods that still have not been created.
+                    format: int32
+                    type: integer
+                  updatedReplicas:
+                    description: Total number of non-terminated pods targeted by this
+                      deployment that have the desired template spec.
+                    format: int32
+                    type: integer
+                type: object
+              type: array
+          type: object
+      type: object
+  version: v1beta1
+  versions:
+  - name: v1beta1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
