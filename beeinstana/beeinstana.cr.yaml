@@ -6,11 +6,11 @@ spec:
   privilegedContainers: false
   hostPID: false
   aggregator:
-    shards: 2
-    mirrors: 2
+    shards: 1
+    mirrors: 1
     image:
-      name: containers.instana.io/fleet/beeinstana/aggregator
-      tag: "1.1.79-release.1"
+      name: containers.instana.io/instana/release/product/beeinstana/aggregator
+      tag: "1.1.103-release.1"
     httpPort: 9998
     tcpPort: 9191
     memory: "2000Mi"
@@ -24,8 +24,8 @@ spec:
   ingestor:
     replicas: 1
     image:
-      name: containers.instana.io/fleet/beeinstana/ingestor
-      tag: "1.1.79-release.1"
+      name: containers.instana.io/instana/release/product/beeinstana/ingestor
+      tag: "1.1.103-release.1"
     webSocketPort: 9090
     adminPort: 8080
     memory: "4000Mi"
@@ -41,7 +41,7 @@ spec:
   config:
     replicas: 2
     image:
-      name: containers.instana.io/fleet/beeinstana/monconfig
+      name: containers.instana.io/instana/release/product/beeinstana/monconfig
       tag: master
     port: 8000
     memory: "1000Mi"

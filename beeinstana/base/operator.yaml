@@ -19,7 +19,7 @@ spec:
         - name: instana-registry
       containers:
         - name: beeinstana-operator
-          image: containers.instana.io/fleet/beeinstana/operator:1.0.51
+          image: containers.instana.io/release/product/beeinstana/operator:1.0.51
           imagePullPolicy: Always
           command:
             - /manager
